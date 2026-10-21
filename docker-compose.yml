@@ -10,7 +10,8 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
-
+      - ./db/readonly_role.sql:/docker-entrypoint-initdb.d/02-readonly.sql:ro
+      
   redis:
     image: redis:7-alpine
     ports:

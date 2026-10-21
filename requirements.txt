@@ -3,3 +3,6 @@ uvicorn[standard]
 psycopg[binary]
 redis
 pytest
+langgraph
+langchain-groq
+python-dotenv

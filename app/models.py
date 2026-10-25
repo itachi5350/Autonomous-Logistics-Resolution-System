@@ -31,3 +31,12 @@ class OrderInfo(BaseModel):
 class Recommendation(BaseModel):
     recommended_action: Literal["refund", "replacement", "cancel"]
     reasoning: str
+
+class CustomerEmail(BaseModel):
+    subject: str
+    body: str
+
+
+class CustomerChoice(BaseModel):
+    choice: Literal["refund", "replacement", "cancel", "unclear"]
+    note: str

@@ -6,3 +6,4 @@ pytest
 langgraph
 langchain-groq
 python-dotenv
+langgraph-checkpoint-postgres

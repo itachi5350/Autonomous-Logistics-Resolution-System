@@ -17,5 +17,10 @@ MAX_SQL_ATTEMPTS = int(os.getenv("MAX_SQL_ATTEMPTS", "2"))
 
 DECISION_MODEL = os.getenv("DECISION_MODEL", GROQ_MODEL)
 MAX_TOOL_CALLS = 4
+
+
 FULFILMENT_WAREHOUSE = os.getenv("FULFILMENT_WAREHOUSE", "Bengaluru")
 REPLACEMENT_SHIPPING_INR = 150  # made-up assumption, change freely
+
+COMMUNICATOR_MODEL = os.getenv("COMMUNICATOR_MODEL", GROQ_MODEL)
+MAX_CUSTOMER_ASKS = 2   # first email plus one clarification

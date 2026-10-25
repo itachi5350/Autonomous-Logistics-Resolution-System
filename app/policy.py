@@ -46,3 +46,12 @@ def resolve_recommendation(recommended: str | None, offered: list[str]) -> tuple
     if recommended in offered:
         return recommended, False
     return offered[0], True
+
+def customer_options(order: dict, offered: list[str]) -> list[dict]:
+    """Plain-language text for each legal option. Code writes this, not the model."""
+    texts = {
+        "refund": f"A full refund of Rs {order['amount_paid_inr']:,} to your original payment method",
+        "replacement": f"A free replacement, shipped from our {FULFILMENT_WAREHOUSE} warehouse",
+        "cancel": "Cancel the order. You will not be charged anything",
+    }
+    return [{"action": a, "description": texts[a]} for a in offered]

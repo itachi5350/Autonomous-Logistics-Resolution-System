@@ -72,3 +72,10 @@ CREATE TABLE actions (
     api_result      JSONB,
     attempts        INTEGER NOT NULL DEFAULT 0
 );
+
+ALTER TABLE cases
+    ADD COLUMN IF NOT EXISTS options JSONB,
+    ADD COLUMN IF NOT EXISTS customer_message TEXT,
+    ADD COLUMN IF NOT EXISTS customer_choice TEXT,
+    ADD COLUMN IF NOT EXISTS customer_replied_at TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS reply_token TEXT;

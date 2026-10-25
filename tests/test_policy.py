@@ -1,4 +1,4 @@
-from app.policy import offered_actions, resolve_recommendation
+from app.policy import customer_options, offered_actions, resolve_recommendation
 
 
 def test_prepaid_in_stock_offers_refund_then_replacement():
@@ -28,3 +28,8 @@ def test_illegal_recommendation_is_overridden_to_safest_option():
 
 def test_missing_recommendation_falls_back():
     assert resolve_recommendation(None, ["refund"]) == ("refund", True)
+
+def test_customer_options_only_describe_offered_actions():
+    options = customer_options({"amount_paid_inr": 8999}, ["refund"])
+    assert [o["action"] for o in options] == ["refund"]
+    assert "8,999" in options[0]["description"]

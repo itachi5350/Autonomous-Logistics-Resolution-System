@@ -24,3 +24,8 @@ REPLACEMENT_SHIPPING_INR = 150  # made-up assumption, change freely
 
 COMMUNICATOR_MODEL = os.getenv("COMMUNICATOR_MODEL", GROQ_MODEL)
 MAX_CUSTOMER_ASKS = 2   # first email plus one clarification
+
+APPROVAL_THRESHOLD_INR = int(os.getenv("APPROVAL_THRESHOLD_INR", "2000"))
+
+STRUCTURED_OUTPUT_METHOD = os.getenv("STRUCTURED_OUTPUT_METHOD", "")   # "" = library default (function_calling)
+PACE_SECONDS = float(os.getenv("PACE_SECONDS", "0"))

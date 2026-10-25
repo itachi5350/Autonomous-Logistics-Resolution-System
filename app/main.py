@@ -54,3 +54,22 @@ def customer_reply(case_id: str, body: CustomerReply):
         raise HTTPException(status_code=409, detail=f"case is '{row[0]}', not waiting for a reply")
     event_queue.publish({"kind": "customer_reply", "case_id": case_id, "message": body.message})
     return {"status": "accepted"}
+
+class ManagerDecision(BaseModel):
+    token: str = Field(min_length=1, max_length=100)
+    approved: bool
+    approver: str = Field(default="manager", max_length=100)
+    note: str = Field(default="", max_length=500)
+
+
+@app.post("/manager/cases/{case_id}/decision", status_code=202)
+def manager_decision(case_id: str, body: ManagerDecision):
+    with psycopg.connect(DATABASE_URL) as conn:
+        row = conn.execute("SELECT status, approval_token FROM cases WHERE id = %s", (case_id,)).fetchone()
+    if row is None or row[1] is None or not secrets.compare_digest(row[1].encode(), body.token.encode()):
+        raise HTTPException(status_code=404, detail="case not found")
+    if row[0] != "awaiting_approval":
+        raise HTTPException(status_code=409, detail=f"case is '{row[0]}', not waiting for approval")
+    event_queue.publish({"kind": "manager_decision", "case_id": case_id, "approved": body.approved,
+                         "approver": body.approver, "note": body.note})
+    return {"status": "accepted"}

@@ -2,7 +2,7 @@
 import psycopg
 from psycopg.rows import dict_row
 
-from app.config import FULFILMENT_WAREHOUSE, READONLY_DATABASE_URL, REPLACEMENT_SHIPPING_INR
+from app.config import APPROVAL_THRESHOLD_INR, FULFILMENT_WAREHOUSE, READONLY_DATABASE_URL, REPLACEMENT_SHIPPING_INR
 
 
 def _fetch(sql: str, params: tuple) -> list[dict]:
@@ -55,3 +55,11 @@ def customer_options(order: dict, offered: list[str]) -> list[dict]:
         "cancel": "Cancel the order. You will not be charged anything",
     }
     return [{"action": a, "description": texts[a]} for a in offered]
+
+def payout_inr(action: str, costs: dict) -> int:
+    """What the company pays out if this action goes ahead. Used by the manager gate."""
+    return {"refund": costs["refund_inr"], "replacement": costs["replacement_inr"], "cancel": 0}[action]
+
+
+def requires_approval(payout: int) -> bool:
+    return payout > APPROVAL_THRESHOLD_INR

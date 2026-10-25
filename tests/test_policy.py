@@ -1,4 +1,4 @@
-from app.policy import customer_options, offered_actions, resolve_recommendation
+from app.policy import customer_options, offered_actions, payout_inr, requires_approval, resolve_recommendation
 
 
 def test_prepaid_in_stock_offers_refund_then_replacement():
@@ -33,3 +33,14 @@ def test_customer_options_only_describe_offered_actions():
     options = customer_options({"amount_paid_inr": 8999}, ["refund"])
     assert [o["action"] for o in options] == ["refund"]
     assert "8,999" in options[0]["description"]
+
+def test_payout_of_each_action():
+    costs = {"refund_inr": 8999, "replacement_inr": 1649, "cancel_inr": 0}
+    assert payout_inr("refund", costs) == 8999
+    assert payout_inr("replacement", costs) == 1649
+    assert payout_inr("cancel", costs) == 0
+
+
+def test_threshold_is_strictly_above():
+    assert requires_approval(2000) is False      # assumes the default limit of 2000
+    assert requires_approval(2001) is True

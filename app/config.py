@@ -29,3 +29,7 @@ APPROVAL_THRESHOLD_INR = int(os.getenv("APPROVAL_THRESHOLD_INR", "2000"))
 
 STRUCTURED_OUTPUT_METHOD = os.getenv("STRUCTURED_OUTPUT_METHOD", "")   # "" = library default (function_calling)
 PACE_SECONDS = float(os.getenv("PACE_SECONDS", "0"))
+
+MOCK_API_URL = os.getenv("MOCK_API_URL", "http://localhost:8001")
+ACTION_MAX_ATTEMPTS = int(os.getenv("ACTION_MAX_ATTEMPTS", "5"))
+ACTION_TIMEOUT_SECONDS = float(os.getenv("ACTION_TIMEOUT_SECONDS", "5"))

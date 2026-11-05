@@ -66,6 +66,10 @@ def create_app(chaos_rate: float = 0.2, seed: int | None = None, fail_after_comm
     def create_replacement(body: PayoutRequest, idempotency_key: str | None = Header(default=None)):
         return payout("replacement", body, idempotency_key)
 
+    @app.post("/cancellations")
+    def create_cancellation(body: PayoutRequest, idempotency_key: str | None = Header(default=None)):
+        return payout("cancel", body, idempotency_key)
+
     @app.get("/_debug/ledger")  # never fails; lets you check for duplicate payouts
     def get_ledger():
         return {"count": len(ledger), "payouts": ledger}
@@ -73,4 +77,7 @@ def create_app(chaos_rate: float = 0.2, seed: int | None = None, fail_after_comm
     return app
 
 
-app = create_app(chaos_rate=float(os.getenv("CHAOS_RATE", "0.2")))
+app = create_app(
+    chaos_rate=float(os.getenv("CHAOS_RATE", "0.2")),
+    fail_after_commit=os.getenv("CHAOS_AFTER_COMMIT", "0") == "1",
+)

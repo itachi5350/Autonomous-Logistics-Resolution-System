@@ -88,32 +88,56 @@ def save_manager_pause(case_id: str, payload: dict) -> None:
     print(f'                     or: python scripts/manager.py {case_id} {token} reject "too risky"')
 
 
+def print_email_box(title: str, message: dict) -> None:
+    print(f"  {title}")
+    print("  ------------------------------------------------")
+    for line in f"{message['subject']}\n\n{message['body']}".splitlines():
+        print(f"  | {line}")
+    print("  ------------------------------------------------")
+
+
 def save_outcome(case_id: str, values: dict) -> None:
-    """The graph finished with an approval decision (automatic or by the manager)."""
+    """The graph finished: rejected, or approved and the action was attempted."""
     approval, choice = values["approval"], values["customer_choice"]
     payout = values.get("payout_inr", 0)
     approved = approval["approved"]
-    status = "approved" if approved else "rejected"
+    result = values.get("action_result") or {}
+    if not approved:
+        status = "rejected"
+    elif result.get("ok"):
+        status = "resolved"
+    else:
+        status = "failed_needs_human"
     with psycopg.connect(DATABASE_URL) as conn:
         conn.execute(
             "UPDATE cases SET status = %s, customer_choice = %s, final_action = %s, action_amount_inr = %s, "
             "customer_replied_at = COALESCE(customer_replied_at, now()) WHERE id = %s",
             (status, choice, choice if approved else None, payout, case_id),
         )
+        if status == "resolved":
+            conn.execute("UPDATE cases SET closed_at = now() WHERE id = %s", (case_id,))
         conn.execute(
             "INSERT INTO approvals (case_id, status, approver, comment, decided_at) "
             "VALUES (%s, %s, %s, %s, now()) ON CONFLICT (case_id) DO UPDATE SET "
             "status = EXCLUDED.status, approver = EXCLUDED.approver, comment = EXCLUDED.comment, "
             "decided_at = EXCLUDED.decided_at",
-            (case_id, status, approval["approver"], approval["note"]),
+            (case_id, "approved" if approved else "rejected", approval["approver"], approval["note"]),
         )
     who = "automatically" if approval.get("auto") else f"by {approval['approver']}"
-    print(f"[worker] {case_id}: {status.upper()} {who}: '{choice}', payout Rs {payout:,}. Note: {approval['note']}")
-    if approved:
-        print("           Next phase: the Action agent carries it out.")
+    print(f"[worker] {case_id}: {'APPROVED' if approved else 'REJECTED'} {who}: '{choice}', "
+          f"payout Rs {payout:,}. Note: {approval['note']}")
+    if not approved:
+        print("           Rejected: a human needs to follow up.")
+    elif result.get("ok"):
+        replay = " (already done earlier, not called again)" if result.get("replayed") else ""
+        print(f"           ACTION DONE: {choice}, provider id {result['provider_id']}, "
+              f"{result['attempts']} attempt(s){replay}")
+        print(f"           status -> resolved. Idempotency key: {result['idempotency_key']}")
+        if values.get("confirmation"):
+            print_email_box(f"[worker] {case_id}: confirmation email that would be sent:", values["confirmation"])
     else:
-        print("           Rejected: a human needs to follow up (Phase 5 will route this).")
-
+        print(f"           ACTION FAILED after {result.get('attempts', 0)} attempt(s): {result.get('error')}")
+        print("           status -> failed_needs_human. Retrying later with the SAME key is safe.")
 
 def finish(case_id: str, graph, result: dict) -> None:
     """Called after every invoke: the graph is either paused or finished."""

@@ -80,5 +80,9 @@ ALTER TABLE cases
     ADD COLUMN IF NOT EXISTS customer_replied_at TIMESTAMPTZ,
     ADD COLUMN IF NOT EXISTS reply_token TEXT,
     ADD COLUMN IF NOT EXISTS approval_token TEXT,
-    ADD COLUMN IF NOT EXISTS final_action TEXT;
-
+    ADD COLUMN IF NOT EXISTS final_action TEXT,
+    
+ALTER TABLE actions
+    ADD COLUMN IF NOT EXISTS status TEXT,
+    ADD COLUMN IF NOT EXISTS last_error TEXT,
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT now();

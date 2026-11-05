@@ -9,7 +9,7 @@ from langgraph.graph.message import add_messages
 from langgraph.types import interrupt
 from psycopg.rows import dict_row
 
-from app import policy
+from app import actions, policy
 from app.config import (APPROVAL_THRESHOLD_INR, COMMUNICATOR_MODEL, DECISION_MODEL, GROQ_MODEL, MAX_CUSTOMER_ASKS,
                         MAX_SQL_ATTEMPTS, MAX_TOOL_CALLS, READONLY_DATABASE_URL, STRUCTURED_OUTPUT_METHOD)
 from app.models import CustomerChoice, CustomerEmail, OrderInfo, Recommendation, SqlQuery
@@ -84,6 +84,8 @@ class CaseState(TypedDict, total=False):
     payout_inr: int
     needs_approval: bool
     approval: dict
+    action_result: dict
+    confirmation: dict
 
 
 # ---------- Phase 2: DB agent ----------
@@ -433,6 +435,52 @@ def ask_manager(state: CaseState) -> dict:
                          "auto": False}}                        # still unclear: the worker will hand it to a human
 
 
+
+# ---------- Phase 5: carrying out the approved action ----------
+CONFIRM_PROMPT = """You write a short, polite confirmation email for an online store's customer care team.
+Tell the customer the resolution they chose has been processed. Use ONLY the facts given.
+Do not state any delivery date, refund timeframe or other promise that is not in the facts.
+Keep it under 100 words. Sign off as "Customer Care Team"."""
+
+
+def route_after_approval(state: CaseState) -> str:
+    return "execute_action" if state["approval"]["approved"] else END
+
+
+def execute_action(state: CaseState) -> dict:
+    """Plain code, no LLM. Running this node twice is safe: the idempotency key never changes."""
+    result = actions.run_action(state["case_id"], state["order"], state["customer_choice"], state["payout_inr"])
+    return {"action_result": result}
+
+
+def route_after_action(state: CaseState) -> str:
+    return "confirm_customer" if state["action_result"]["ok"] else END
+
+
+def confirm_customer(state: CaseState) -> dict:
+    order, result, action = state["order"], state["action_result"], state["customer_choice"]
+    what = {
+        "refund": f"a full refund of Rs {result['amount_inr']:,} to your original payment method",
+        "replacement": "a free replacement, shipped from our Bengaluru warehouse",
+        "cancel": "the cancellation of your order, with no charge",
+    }[action]
+    facts = (f"Customer name: {order['customer_name']}\nProduct: {order['product_name']}\n"
+             f"Processed: {what}\nReference: {result['provider_id']}")
+    try:
+        email = call_with_retry(lambda: email_writer().invoke([("system", CONFIRM_PROMPT), ("human", facts)]))
+        message = {"subject": email.subject, "body": email.body}
+    except Exception as err:
+        print(f"[communicator] confirmation model call failed: {err!r}; using the plain template")
+        message = {
+            "subject": f"Your order is sorted: {order['product_name']}",
+            "body": (f"Hello {order['customer_name']},\n\nWe have processed {what} for your "
+                     f"{order['product_name']}. Reference: {result['provider_id']}.\n\nCustomer Care Team"),
+        }
+    return {"confirmation": message}
+
+
+
+
 def build_graph(checkpointer=None):
     builder = StateGraph(CaseState)
     builder.add_node("write_sql", write_sql)
@@ -442,13 +490,15 @@ def build_graph(checkpointer=None):
     builder.add_node("tools", run_tools)
     builder.add_node("recommend", recommend)
     builder.add_node("verify", verify)
+    builder.add_node("single_option", single_option)
     builder.add_node("compose_message", compose_message)
     builder.add_node("ask_customer", ask_customer)
     builder.add_node("interpret_reply", interpret_reply)
     builder.add_node("gate", gate)
     builder.add_node("auto_approve", auto_approve)
     builder.add_node("ask_manager", ask_manager)
-    builder.add_node("single_option", single_option)
+    builder.add_node("execute_action", execute_action)
+    builder.add_node("confirm_customer", confirm_customer)
 
     builder.add_edge(START, "write_sql")
     builder.add_edge("write_sql", "run_sql")
@@ -473,6 +523,14 @@ def build_graph(checkpointer=None):
         "gate", route_after_gate,
         {"ask_manager": "ask_manager", "auto_approve": "auto_approve", END: END},
     )
-    builder.add_edge("auto_approve", END)
-    builder.add_edge("ask_manager", END)
+    builder.add_conditional_edges(
+        "auto_approve", route_after_approval, {"execute_action": "execute_action", END: END}
+    )
+    builder.add_conditional_edges(
+        "ask_manager", route_after_approval, {"execute_action": "execute_action", END: END}
+    )
+    builder.add_conditional_edges(
+        "execute_action", route_after_action, {"confirm_customer": "confirm_customer", END: END}
+    )
+    builder.add_edge("confirm_customer", END)
     return builder.compile(checkpointer=checkpointer)

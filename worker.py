@@ -259,7 +259,7 @@ def handle_retry_action(msg: dict, graph) -> None:
         return
 
     confirmation = confirm_customer(
-        {"order": order, "action_result": result, "customer_choice": action}
+        {"order": order, "action_result": result, "customer_choice": action, "case_id": case_id}
     )["confirmation"]
     with psycopg.connect(DATABASE_URL) as conn:
         conn.execute(

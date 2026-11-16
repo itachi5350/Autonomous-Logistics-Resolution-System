@@ -73,6 +73,21 @@ CREATE TABLE actions (
     attempts        INTEGER NOT NULL DEFAULT 0
 );
 
+CREATE TABLE agent_calls(
+    id              BIGSERIAL PRIMARY KEY,
+    case_id         TEXT,
+    agent           TEXT NOT NULL,
+    step            TEXT NOT NULL,
+    model           TEXT NOT NULL,
+    ok              BOOLEAN NOT NULL,
+    retries        INTEGER NOT NULL DEFAULT 0,
+    latency_ms     INTEGER NOT NULL,
+    error          TEXT,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS agent_calls_agent_idx ON agent_calls(agent, created_at);
+
 ALTER TABLE cases
     ADD COLUMN IF NOT EXISTS options JSONB,
     ADD COLUMN IF NOT EXISTS customer_message TEXT,

@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from psycopg.types.json import Jsonb
 import secrets
 from pydantic import BaseModel, Field
-from app import event_queue
+from app import dashboard, event_queue
 from app.config import DATABASE_URL
 from app.models import ShippingEvent
 from app.triage import triage
@@ -73,3 +73,5 @@ def manager_decision(case_id: str, body: ManagerDecision):
     event_queue.publish({"kind": "manager_decision", "case_id": case_id, "approved": body.approved,
                          "approver": body.approver, "note": body.note})
     return {"status": "accepted"}
+
+app.include_router(dashboard.router)

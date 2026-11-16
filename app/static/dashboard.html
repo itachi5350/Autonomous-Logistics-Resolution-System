@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logistics Resolution Dashboard</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1c2430;--mute:#667085;--line:#e3e6eb;--accent:#2f5bea;
+--ok:#157f4b;--warn:#a85a07;--bad:#c0362c;--okbg:#e4f5ec;--warnbg:#fdf0dc;--badbg:#fbe4e2;--infobg:#e6edff}
+@media (prefers-color-scheme:dark){:root{--bg:#12161c;--card:#1a2029;--ink:#e6e9ee;--mute:#9aa4b2;--line:#2b3340;
+--accent:#7aa2ff;--ok:#5fd08d;--warn:#f0b35a;--bad:#ff8a80;--okbg:#17332a;--warnbg:#3a2d17;--badbg:#3b1f1d;--infobg:#1d2a4a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card)}
+h1{font-size:17px;margin:0}
+h2{font-size:13px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute)}
+main{padding:16px 20px;max-width:1280px;margin:0 auto}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.tile,.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.tile b{display:block;font-size:26px;line-height:1.1}
+.tile span{color:var(--mute);font-size:12px}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--mute);font-weight:600}
+tr.row{cursor:pointer}
+tr.row:hover,tr.sel{background:var(--infobg)}
+.scroll{overflow-x:auto}
+.pill{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;white-space:nowrap}
+.ok{background:var(--okbg);color:var(--ok)} .warn{background:var(--warnbg);color:var(--warn)}
+.bad{background:var(--badbg);color:var(--bad)} .info{background:var(--infobg);color:var(--accent)}
+.mute{color:var(--mute)} .num{text-align:right;font-variant-numeric:tabular-nums}
+pre{white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;margin:6px 0;font:13px/1.4 ui-monospace,Consolas,monospace}
+button,select,input{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:5px 10px}
+button{cursor:pointer} button:hover{border-color:var(--accent)} button:disabled{opacity:.5;cursor:default}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.danger{color:var(--bad)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.bar input[type=text]{flex:1;min-width:180px}
+#err{color:var(--bad)} #toast{position:fixed;right:16px;bottom:16px;padding:8px 14px;border-radius:8px;background:var(--ink);color:var(--bg);display:none}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:4px 10px;margin:8px 0} .kv div:nth-child(odd){color:var(--mute)}
+.demo{display:none} body.demo-on .demo{display:flex}
+.badge{background:var(--warnbg);color:var(--warn);padding:2px 8px;border-radius:99px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Logistics Resolution Dashboard</h1>
+    <span class="mute" id="updated">loading...</span> <span id="err"></span></div>
+  <div class="bar" style="margin:0">
+    <span class="badge demo" id="demobadge">DEMO MODE</span>
+    <span class="demo bar" style="margin:0">
+      <select id="trk"><option>TRK992</option><option>TRK993</option><option>TRK994</option><option>TRK995</option><option>TRK996</option></select>
+      <input id="hrs" type="number" value="75" min="0" max="500" style="width:70px" title="hours stuck">
+      <button class="primary" data-act="send">Send "stuck" event</button>
+    </span>
+  </div>
+</header>
+<main>
+  <div class="tiles" id="tiles"></div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="bar" style="margin-top:0"><h2 style="margin:0">Cases</h2>
+        <select id="filter"><option value="">all statuses</option><option>awaiting_customer</option><option>awaiting_approval</option><option>resolved</option><option>rejected</option><option>failed_needs_human</option></select>
+      </div>
+      <div class="scroll"><table><thead><tr><th>Case</th><th>Customer / product</th><th>Status</th><th>Choice</th><th class="num">Payout</th></tr></thead><tbody id="cases"></tbody></table></div>
+    </div>
+    <div class="card" id="detail"><h2>Case detail</h2><span class="mute">Click a case on the left.</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="card"><h2 id="agenthead">Model calls</h2>
+      <div class="scroll"><table><thead><tr><th>Agent / step</th><th>Model</th><th class="num">Calls</th><th class="num">Failed</th><th class="num">Retried</th><th class="num">Avg ms</th><th class="num">p50</th><th class="num">p95</th></tr></thead><tbody id="agents"></tbody></table></div>
+      <div class="mute" style="margin-top:6px">With few calls, p95 is close to the slowest call: a hint, not a measurement.</div>
+    </div>
+    <div class="card"><h2>Needs a human</h2><div id="human"></div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card"><h2>Provider payouts (the real ledger)</h2><div id="ledger"></div></div>
+    <div class="card"><h2>Mock provider chaos</h2><div id="chaos"></div>
+      <div class="bar demo"><select id="crate"><option value="0">0%</option><option value="0.2">20%</option><option value="0.5">50%</option><option value="1">100%</option></select>
+        <label><input type="checkbox" id="ccommit"> lose response after commit</label>
+        <button data-act="chaos">Apply</button></div></div>
+  </div>
+</main>
+<div id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const STATUS_CLASS = {resolved:"ok", awaiting_customer:"warn", awaiting_approval:"warn", failed_needs_human:"bad", rejected:"bad"};
+const pill = s => `<span class="pill ${STATUS_CLASS[s] || "info"}">${esc(String(s).replace(/_/g, " "))}</span>`;
+const inr = n => n == null ? "-" : "Rs " + Number(n).toLocaleString("en-IN");
+const when = t => t ? new Date(t).toLocaleString() : "-";
+let selected = null, demo = false, lastDetail = "";
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  if (!r.ok) {
+    let d = ""; try { d = (await r.json()).detail; } catch (e) {}
+    throw new Error(r.status + " " + (d || r.statusText));
+  }
+  return r.json();
+}
+const post = (p, b) => api(p, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(b)});
+function flash(msg) { const t = $("#toast"); t.textContent = msg; t.style.display = "block"; setTimeout(() => t.style.display = "none", 3500); }
+
+function renderTiles(stats, nh) {
+  const n = {}; stats.cases.forEach(c => n[c.status] = c.n);
+  const human = (n.failed_needs_human || 0) + (n.rejected || 0) + nh.dead_letters.length;
+  const tiles = [["Awaiting customer", n.awaiting_customer || 0], ["Awaiting manager", n.awaiting_approval || 0],
+                 ["Resolved", n.resolved || 0], ["Needs a human", human]];
+  $("#tiles").innerHTML = tiles.map(([l, v]) => `<div class="tile"><b>${v}</b><span>${l}</span></div>`).join("");
+}
+
+function renderCases(rows) {
+  $("#cases").innerHTML = rows.length ? rows.map(c => `
+    <tr class="row ${c.id === selected ? "sel" : ""}" data-id="${esc(c.id)}">
+      <td>${esc(c.id.replace("case-", ""))}<div class="mute">${esc(c.tracking_id)} · ${when(c.created_at)}</div></td>
+      <td>${esc(c.customer || "-")}<div class="mute">${esc(c.product || "")}</div></td>
+      <td>${pill(c.status)}</td><td>${esc(c.customer_choice || "-")}</td><td class="num">${inr(c.action_amount_inr)}</td></tr>`).join("")
+    : `<tr><td colspan="5" class="mute">No cases yet.</td></tr>`;
+}
+
+function renderAgents(stats) {
+  $("#agenthead").textContent = `Model calls, last ${stats.hours} hour(s)`;
+  $("#agents").innerHTML = stats.agents.length ? stats.agents.map(a => `
+    <tr><td>${esc(a.agent)} / ${esc(a.step)}</td><td class="mute">${esc(a.model)}</td><td class="num">${a.calls}</td>
+    <td class="num">${a.failed ? `<span class="pill bad">${a.failed}</span>` : 0}</td><td class="num">${a.retried}</td>
+    <td class="num">${a.avg_ms}</td><td class="num">${a.p50_ms}</td><td class="num">${a.p95_ms}</td></tr>`).join("")
+    : `<tr><td colspan="8" class="mute">No model calls recorded in this window.</td></tr>`;
+}
+
+function renderHuman(nh) {
+  let html = "";
+  nh.cases.forEach(c => {
+    html += `<div style="margin-bottom:10px"><a href="#" data-pick="${esc(c.id)}">${esc(c.id)}</a> ${pill(c.status)} ${esc(c.customer_choice || "")} ${inr(c.action_amount_inr)}
+      <div class="mute">${esc(c.note || c.last_error || "no reason recorded").split("\n")[0]}</div></div>`;
+  });
+  nh.dead_letters.forEach(d => {
+    html += `<div style="margin-bottom:10px"><span class="pill bad">dead letter</span> ${esc(d.id)}
+      <div class="mute">${esc(d.error || "")}</div><pre>${esc(JSON.stringify(d.event))}</pre></div>`;
+  });
+  if (nh.dead_letter_error) html += `<div class="mute">Dead-letter list unavailable: ${esc(nh.dead_letter_error)}</div>`;
+  $("#human").innerHTML = html || `<span class="mute">Nothing needs a human right now.</span>`;
+}
+
+function renderLedger(l) {
+  if (!l.up) { $("#ledger").innerHTML = `<span class="mute">Mock provider is not reachable (is it running on its port?).</span>`; return; }
+  const last = l.payouts.slice(-5).reverse().map(p => `<pre>${esc(Object.values(p).join("  ·  "))}</pre>`).join("");
+  $("#ledger").innerHTML = `<b style="font-size:22px">${l.payouts.length}</b> <span class="mute">payout(s) really made. One per resolved case, even after retries, is the goal.</span>${last}`;
+}
+
+function renderChaos(c) {
+  $("#chaos").innerHTML = c.up
+    ? `Failure rate <b>${Math.round(c.rate * 100)}%</b> · lose response after commit <b>${c.after_commit ? "on" : "off"}</b>`
+    : `<span class="mute">Mock provider is not reachable.</span>`;
+}
+
+function renderDetail(d) {
+  const c = d.case, dec = c.decision || {};
+  let h = `<h2>Case detail</h2><b>${esc(c.id)}</b> ${pill(c.status)}
+    <div class="kv"><div>Customer</div><div>${esc(c.customer || "-")}</div><div>Product</div><div>${esc(c.product || "-")} (${esc(c.tracking_id)})</div>
+    <div>Offered</div><div>${esc((dec.offered_actions || []).join(", ") || "-")}</div>
+    <div>Model picked</div><div>${esc(dec.model_recommendation ?? "-")}</div>
+    <div>Final recommendation</div><div>${esc(dec.recommended_action || "-")} ${dec.overridden ? `<span class="pill warn">overridden by code</span>` : ""}</div>
+    <div>Reasoning</div><div>${esc(dec.reasoning || "-")}</div>
+    <div>Customer chose</div><div>${esc(c.customer_choice || "-")}</div>
+    <div>Payout</div><div>${inr(c.action_amount_inr)}</div>
+    <div>Note</div><div>${esc(c.note || "-")}</div></div>`;
+  if (c.customer_message) h += `<div class="mute">Email sent to the customer</div><pre>${esc(c.customer_message)}</pre>`;
+  if (d.approval) h += `<div class="mute">Approval</div><div>${esc(d.approval.status)} by ${esc(d.approval.approver || "-")} ${d.approval.comment ? "· " + esc(d.approval.comment) : ""}</div>`;
+  if (d.actions.length) h += `<div class="mute" style="margin-top:8px">Provider actions</div><div class="scroll"><table><thead><tr><th>Action</th><th>Status</th><th class="num">Attempts</th><th>Key</th><th>Error</th></tr></thead><tbody>` +
+    d.actions.map(a => `<tr><td>${esc(a.action_type)}</td><td>${pill(a.status)}</td><td class="num">${a.attempts}</td><td class="mute">${esc(a.idempotency_key)}</td><td class="mute">${esc(a.last_error || "")}</td></tr>`).join("") + `</tbody></table></div>`;
+  if (d.calls.length) h += `<div class="mute" style="margin-top:8px">Model calls for this case</div><div class="scroll"><table><thead><tr><th>Time</th><th>Agent / step</th><th class="num">ms</th><th class="num">Retries</th><th>Result</th></tr></thead><tbody>` +
+    d.calls.map(k => `<tr><td class="mute">${new Date(k.created_at).toLocaleTimeString()}</td><td>${esc(k.agent)} / ${esc(k.step)}</td><td class="num">${k.latency_ms}</td><td class="num">${k.retries}</td><td>${k.ok ? `<span class="pill ok">ok</span>` : `<span class="pill bad">failed</span> ${esc(k.error || "")}`}</td></tr>`).join("") + `</tbody></table></div>`;
+  if (demo) {
+    if (c.status === "awaiting_customer") h += `<div class="bar"><input type="text" id="replytext" placeholder="type the customer's reply">
+      <button class="primary" data-act="reply" data-case="${esc(c.id)}">Send reply</button></div>
+      <div class="bar">` + (dec.offered_actions || []).map(a => `<button data-act="reply" data-case="${esc(c.id)}" data-text="I choose ${esc(a)}">I choose ${esc(a)}</button>`).join("") + `</div>`;
+    if (c.status === "awaiting_approval") h += `<div class="bar"><button class="primary" data-act="approve" data-case="${esc(c.id)}">Approve as manager</button>
+      <button class="danger" data-act="reject" data-case="${esc(c.id)}">Reject</button></div>`;
+    if (c.status === "failed_needs_human") h += `<div class="bar"><button data-act="retry" data-case="${esc(c.id)}">Retry the action (same idempotency key)</button></div>`;
+  }
+  $("#detail").innerHTML = h;
+}
+
+async function refreshDetail() {
+  if (!selected) return;
+  const typing = document.activeElement && $("#detail").contains(document.activeElement) && document.activeElement.tagName === "INPUT";
+  const d = await api("/api/cases/" + encodeURIComponent(selected));
+  const sig = JSON.stringify(d);
+  if (sig !== lastDetail && !typing) { lastDetail = sig; renderDetail(d); }
+}
+
+async function refresh() {
+  try {
+    const f = $("#filter").value;
+    const [stats, cases, nh, ledger, chaos] = await Promise.all([
+      api("/api/stats?hours=24"), api("/api/cases" + (f ? "?status=" + f : "")),
+      api("/api/needs-human"), api("/api/ledger"), api("/api/chaos")]);
+    renderTiles(stats, nh); renderCases(cases); renderAgents(stats); renderHuman(nh); renderLedger(ledger); renderChaos(chaos);
+    await refreshDetail();
+    $("#err").textContent = ""; $("#updated").textContent = "updated " + new Date().toLocaleTimeString() + " (refreshes every 3 s)";
+  } catch (e) { $("#err").textContent = "Problem: " + e.message; }
+}
+
+document.addEventListener("click", async ev => {
+  const row = ev.target.closest("tr.row"); const pick = ev.target.closest("[data-pick]");
+  if (row || pick) { ev.preventDefault(); selected = row ? row.dataset.id : pick.dataset.pick; lastDetail = ""; refresh(); return; }
+  const b = ev.target.closest("[data-act]"); if (!b) return;
+  const id = b.dataset.case; b.disabled = true;
+  try {
+    if (b.dataset.act === "send") await post("/api/demo/send-event", {tracking_id: $("#trk").value, hours_stuck: Number($("#hrs").value)});
+    if (b.dataset.act === "reply") await post("/api/demo/reply", {case_id: id, message: b.dataset.text || $("#replytext").value});
+    if (b.dataset.act === "approve") await post("/api/demo/manager", {case_id: id, approved: true, note: "approved from the dashboard"});
+    if (b.dataset.act === "reject") await post("/api/demo/manager", {case_id: id, approved: false, note: "rejected from the dashboard"});
+    if (b.dataset.act === "retry") await post("/api/demo/retry", {case_id: id});
+    if (b.dataset.act === "chaos") await post("/api/demo/chaos", {rate: Number($("#crate").value), after_commit: $("#ccommit").checked});
+    flash("Sent. The worker picks it up in a moment.");
+  } catch (e) { flash("Failed: " + e.message); }
+  b.disabled = false; setTimeout(refresh, 800);
+});
+$("#filter").addEventListener("change", refresh);
+
+(async () => {
+  try { demo = (await api("/api/config")).demo; } catch (e) {}
+  document.body.classList.toggle("demo-on", demo);
+  refresh(); setInterval(refresh, 3000);
+})();
+</script>
+</body>
+</html>

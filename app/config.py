@@ -36,3 +36,5 @@ ACTION_TIMEOUT_SECONDS = float(os.getenv("ACTION_TIMEOUT_SECONDS", "5"))
 
 MAX_MESSAGE_ATTEMPTS = int(os.getenv("MAX_MESSAGE_ATTEMPTS", "3"))
 RETRY_PENDING_SECONDS = float(os.getenv("RETRY_PENDING_SECONDS", "15"))
+
+DEMO_MODE = os.getenv("DEMO_MODE", "0") == "1"

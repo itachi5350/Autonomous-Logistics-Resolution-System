@@ -55,7 +55,7 @@ def _record_failure(case_id: str, action: str, key: str, attempts: int, error: s
         conn.execute(
             "INSERT INTO actions (case_id, action_type, idempotency_key, status, attempts, last_error) "
             "VALUES (%s, %s, %s, 'failed', %s, %s) ON CONFLICT (idempotency_key) DO UPDATE SET "
-            "status = 'failed', attempts = EXCLUDED.attempts, last_error = EXCLUDED.last_error",
+            "status = 'failed', attempts = actions.attempts + EXCLUDED.attempts, last_error = EXCLUDED.last_error",
             (case_id, action, key, attempts, error),
         )
     return {"ok": False, "attempts": attempts, "error": error, "idempotency_key": key}
@@ -90,11 +90,12 @@ def run_action(case_id: str, order: dict, action: str, approved_payout: int) -> 
     try:
         result = _call_provider(action, order["order_id"], current, key, counter)
     except Exception as err:
-        return _record_failure(case_id, action, key, counter["n"], f"{type(err).__name__}: {err}"[:300])
+        first_line = (str(err).splitlines() or [""])[0]
+        return _record_failure(case_id, action, key, counter["n"], f"{type(err).__name__}: {first_line}"[:300])
 
     with psycopg.connect(DATABASE_URL) as conn:
         conn.execute(
-            "UPDATE actions SET status = 'succeeded', api_result = %s, attempts = %s, last_error = NULL "
+            "UPDATE actions SET status = 'succeeded', api_result = %s, attempts = actions.attempts + %s, last_error = NULL "
             "WHERE idempotency_key = %s",
             (Jsonb(result), counter["n"], key),
         )

@@ -81,6 +81,7 @@ ALTER TABLE cases
     ADD COLUMN IF NOT EXISTS reply_token TEXT,
     ADD COLUMN IF NOT EXISTS approval_token TEXT,
     ADD COLUMN IF NOT EXISTS final_action TEXT,
+    ADD COLUMN IF NOT EXISTS note TEXT;
     
 ALTER TABLE actions
     ADD COLUMN IF NOT EXISTS status TEXT,

@@ -11,14 +11,20 @@ class PayoutRequest(BaseModel):
     amount_inr: int = Field(ge=0)
 
 
+class ChaosSettings(BaseModel):
+    rate: float = Field(ge=0, le=1)
+    after_commit: bool = False
+
+
 def create_app(chaos_rate: float = 0.2, seed: int | None = None, fail_after_commit: bool = False) -> FastAPI:
     app = FastAPI(title="Mock carrier and refund APIs")
     rng = random.Random(seed)
     ledger: list[dict] = []       # every payout that really happened
     by_key: dict[str, dict] = {}  # "kind:idempotency_key" -> stored result
+    chaos = {"rate": chaos_rate, "after_commit": fail_after_commit}   # can be changed while running
 
     def roll_failure() -> bool:
-        return rng.random() < chaos_rate
+        return rng.random() < chaos["rate"]
 
     def unavailable() -> HTTPException:
         return HTTPException(status_code=503, detail="Service Unavailable (chaos)", headers={"Retry-After": "5"})
@@ -36,7 +42,7 @@ def create_app(chaos_rate: float = 0.2, seed: int | None = None, fail_after_comm
         scoped_key = f"{kind}:{idempotency_key}"  # refunds and replacements never share a key
 
         failing = roll_failure()
-        if failing and not fail_after_commit:
+        if failing and not chaos["after_commit"]:
             raise unavailable()  # failed before doing anything
 
         if scoped_key in by_key:
@@ -54,7 +60,7 @@ def create_app(chaos_rate: float = 0.2, seed: int | None = None, fail_after_comm
             by_key[scoped_key] = result
             ledger.append(result)
 
-        if failing and fail_after_commit:
+        if failing and chaos["after_commit"]:
             raise unavailable()  # payout recorded, but the caller sees a 503
         return result
 
@@ -73,6 +79,16 @@ def create_app(chaos_rate: float = 0.2, seed: int | None = None, fail_after_comm
     @app.get("/_debug/ledger")  # never fails; lets you check for duplicate payouts
     def get_ledger():
         return {"count": len(ledger), "payouts": ledger}
+
+    @app.get("/_debug/chaos")
+    def get_chaos():
+        return chaos
+
+    @app.post("/_debug/chaos")  # change the failure behaviour without restarting (a restart forgets all keys)
+    def set_chaos(settings: ChaosSettings):
+        chaos["rate"] = settings.rate
+        chaos["after_commit"] = settings.after_commit
+        return chaos
 
     return app
 

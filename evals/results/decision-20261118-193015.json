@@ -1,0 +1,121 @@
+{
+  "name": "decision",
+  "model": "openai/gpt-oss-20b",
+  "when": "20261118-193015",
+  "headline": {
+    "runs": 8,
+    "errors": 0,
+    "legal": "8/8",
+    "overridden": "0/8",
+    "used_tools": "8/8",
+    "consistent_orders": "4/4",
+    "p50_ms": 4237,
+    "p95_ms": 8261
+  },
+  "details": [
+    {
+      "tracking_id": "TRK992",
+      "pick": "replacement",
+      "offered": [
+        "refund",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 8261,
+      "reasoning": "Replacement is preferred because it retains the sale, Bengaluru has sufficient stock for shipping, and the cost difference is negligible."
+    },
+    {
+      "tracking_id": "TRK993",
+      "pick": "replacement",
+      "offered": [
+        "refund",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 1,
+      "ms": 3567,
+      "reasoning": "The product is in stock at the Bengaluru warehouse, which is the only location from which replacements can be shipped, and replacement is an allowed action for this order."
+    },
+    {
+      "tracking_id": "TRK995",
+      "pick": "replacement",
+      "offered": [
+        "cancel",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 4454,
+      "reasoning": "Replacement is the only allowed action that preserves the sale and utilizes available stock in Bengaluru, ensuring the customer receives the product without delay. Since the customer has not paid yet, offering a replacement is straightforward and aligns with company policy."
+    },
+    {
+      "tracking_id": "TRK996",
+      "pick": "replacement",
+      "offered": [
+        "cancel",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 3697,
+      "reasoning": "Replacement is the preferred action as it preserves the sale and is allowed; Bengaluru has sufficient stock and replacements can only ship from Bengaluru, ensuring fulfillment. No refund is needed since the customer has not paid yet."
+    },
+    {
+      "tracking_id": "TRK992",
+      "pick": "replacement",
+      "offered": [
+        "refund",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 4423,
+      "reasoning": "Replacement is allowed and preserves the sale; Bengaluru has sufficient stock and replacements can only ship from Bengaluru, making it feasible and preferable over a refund."
+    },
+    {
+      "tracking_id": "TRK993",
+      "pick": "replacement",
+      "offered": [
+        "refund",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 1,
+      "ms": 3501,
+      "reasoning": "The product is in stock at the Bengaluru warehouse, which is the only location from which replacements can be shipped, and replacement is an allowed action for this order."
+    },
+    {
+      "tracking_id": "TRK995",
+      "pick": "replacement",
+      "offered": [
+        "cancel",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 4237,
+      "reasoning": "Replacement is the only allowed action that preserves the sale and utilizes available stock in Bengaluru, ensuring the customer receives the product without delay. Since the customer has not paid yet, offering a replacement is straightforward and aligns with company policy."
+    },
+    {
+      "tracking_id": "TRK996",
+      "pick": "replacement",
+      "offered": [
+        "cancel",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 5800,
+      "reasoning": "Replacement is the preferred action as it preserves the sale and is allowed; Bengaluru has sufficient stock and replacements can only ship from Bengaluru, ensuring fulfillment. No refund is needed since the customer has not paid yet."
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "TRK992": {
+    "order": {
+      "tracking_id": "TRK992",
+      "order_id": 1,
+      "customer_name": "Aarav Mehta",
+      "customer_email": "aarav@example.com",
+      "sku": "MBP-14",
+      "product_name": "MacBook Pro 14-inch",
+      "order_value_inr": 150000,
+      "amount_paid_inr": 150000,
+      "payment_method": "PREPAID",
+      "shipment_status": "in_transit"
+    },
+    "decision": {
+      "offered_actions": [
+        "refund",
+        "replacement"
+      ],
+      "recommended_action": "replacement",
+      "overridden": false,
+      "model_recommendation": "replacement",
+      "reasoning": "Replacement is allowed and preserves the sale; Bengaluru has sufficient stock and replacements can only ship from Bengaluru, making it feasible and preferable over a refund.",
+      "costs_inr": {
+        "refund_inr": 150000,
+        "replacement_inr": 150150,
+        "cancel_inr": 0
+      }
+    }
+  },
+  "TRK993": {
+    "order": {
+      "tracking_id": "TRK993",
+      "order_id": 2,
+      "customer_name": "Diya Nair",
+      "customer_email": "diya@example.com",
+      "sku": "MOUSE-01",
+      "product_name": "Wireless Mouse",
+      "order_value_inr": 1499,
+      "amount_paid_inr": 1499,
+      "payment_method": "PREPAID",
+      "shipment_status": "in_transit"
+    },
+    "decision": {
+      "offered_actions": [
+        "refund",
+        "replacement"
+      ],
+      "recommended_action": "replacement",
+      "overridden": false,
+      "model_recommendation": "replacement",
+      "reasoning": "The product is in stock at the Bengaluru warehouse, which is the only location from which replacements can be shipped, and replacement is an allowed action for this order.",
+      "costs_inr": {
+        "refund_inr": 1499,
+        "replacement_inr": 1649,
+        "cancel_inr": 0
+      }
+    }
+  },
+  "TRK995": {
+    "order": {
+      "tracking_id": "TRK995",
+      "order_id": 5,
+      "customer_name": "Diya Nair",
+      "customer_email": "diya@example.com",
+      "sku": "MOUSE-01",
+      "product_name": "Wireless Mouse",
+      "order_value_inr": 1499,
+      "amount_paid_inr": 0,
+      "payment_method": "COD",
+      "shipment_status": "in_transit"
+    },
+    "decision": {
+      "offered_actions": [
+        "cancel",
+        "replacement"
+      ],
+      "recommended_action": "replacement",
+      "overridden": false,
+      "model_recommendation": "replacement",
+      "reasoning": "Replacement is the only allowed action that preserves the sale and utilizes available stock in Bengaluru, ensuring the customer receives the product without delay. Since the customer has not paid yet, offering a replacement is straightforward and aligns with company policy.",
+      "costs_inr": {
+        "refund_inr": 0,
+        "replacement_inr": 1649,
+        "cancel_inr": 0
+      }
+    }
+  },
+  "TRK996": {
+    "order": {
+      "tracking_id": "TRK996",
+      "order_id": 6,
+      "customer_name": "Kabir Singh",
+      "customer_email": "kabir@example.com",
+      "sku": "MBP-14",
+      "product_name": "MacBook Pro 14-inch",
+      "order_value_inr": 150000,
+      "amount_paid_inr": 0,
+      "payment_method": "COD",
+      "shipment_status": "in_transit"
+    },
+    "decision": {
+      "offered_actions": [
+        "cancel",
+        "replacement"
+      ],
+      "recommended_action": "replacement",
+      "overridden": false,
+      "model_recommendation": "replacement",
+      "reasoning": "Replacement is the preferred action as it preserves the sale and is allowed; Bengaluru has sufficient stock and replacements can only ship from Bengaluru, ensuring fulfillment. No refund is needed since the customer has not paid yet.",
+      "costs_inr": {
+        "refund_inr": 0,
+        "replacement_inr": 150150,
+        "cancel_inr": 0
+      }
+    }
+  }
+}

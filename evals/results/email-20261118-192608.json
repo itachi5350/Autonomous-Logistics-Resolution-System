@@ -1,0 +1,199 @@
+{
+  "name": "email",
+  "model": "openai/gpt-oss-120b",
+  "when": "20261118-192608",
+  "headline": {
+    "emails": 12,
+    "all_checks": "12/12",
+    "template_fallbacks": 0,
+    "product_named": "12/12",
+    "all_options_present": "12/12",
+    "no_invented_options": "12/12",
+    "no_invented_amounts": "12/12",
+    "suggestion_stated": "12/12",
+    "signed": "12/12",
+    "within_120_words": "12/12"
+  },
+  "details": [
+    {
+      "tracking_id": "TRK992",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on your MacBook Pro 14\u2011inch order",
+      "body": "Dear Aarav Mehta,\n\nWe\u2019re sorry to let you know that your MacBook Pro 14\u2011inch is delayed in transit. To resolve this, you may choose one of the following:\n- refund: A full refund of Rs 150,000 to your original payment method\n- replacement: A free replacement, shipped from our Bengaluru warehouse\nWe suggest the replacement option, but the final decision is yours. Please reply to this email with your choice.\n\nThank you for your patience.\n\nCustomer Care Team"
+    },
+    {
+      "tracking_id": "TRK993",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on your Wireless Mouse order",
+      "body": "Dear Diya Nair,\n\nWe\u2019re sorry to inform you that your Wireless Mouse is delayed in transit. To resolve this, you may choose either a full refund of Rs\u202f1,499 to your original payment method, or a free replacement shipped from our Bengaluru warehouse. We suggest the replacement, but the decision is yours. Please reply to this email with your preferred option.\n\nThank you for your patience.\n\nCustomer Care Team"
+    },
+    {
+      "tracking_id": "TRK995",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on your Wireless Mouse order",
+      "body": "Dear Diya Nair,\n\nWe\u2019re sorry to inform you that your Wireless Mouse is delayed while in transit. To resolve this, you may either cancel the order (you will not be charged) or receive a free replacement shipped from our Bengaluru warehouse. We suggest the replacement, but the choice is yours. Please reply to this email with your preferred option.\n\nThank you for your patience.\n\nCustomer Care Team"
+    },
+    {
+      "tracking_id": "TRK996",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on Your MacBook Pro 14\u2011inch Order",
+      "body": "Dear Kabir Singh,\n\nWe\u2019re sorry to inform you that your MacBook Pro 14\u2011inch is experiencing a transit delay. To resolve this, you may:\n- Cancel the order \u2013 you will not be charged anything.\n- Receive a free replacement, shipped from our Bengaluru warehouse.\n\nWe suggest the replacement option, but the final choice is yours. Please reply to this email with your preferred option.\n\nThank you for your patience.\n\nCustomer Care Team"
+    },
+    {
+      "tracking_id": "TRK992",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on your MacBook Pro 14\u2011inch order",
+      "body": "Dear Aarav Mehta,\n\nWe\u2019re sorry to inform you that your MacBook Pro 14\u2011inch is delayed in transit.\nYou may choose either a full refund of Rs 150,000 to your original payment method, or a free replacement shipped from our Bengaluru warehouse.\nWe suggest the replacement, but the decision is yours.\nPlease reply to this email with your preferred option.\n\nThank you for your patience.\n\nCustomer Care Team"
+    },
+    {
+      "tracking_id": "TRK993",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on your Wireless Mouse order",
+      "body": "Dear Diya Nair,\n\nWe\u2019re sorry to inform you that your Wireless Mouse is delayed in transit. We understand this is inconvenient and want to resolve it quickly.\n\nYou have two options:\n- Refund: A full refund of Rs 1,499 to your original payment method\n- Replacement: A free replacement, shipped from our Bengaluru warehouse\n\nWe suggest the replacement, but the choice is yours. Please reply to this email with your preferred option.\n\nThank you for your patience.\n\nCustomer Care Team"
+    },
+    {
+      "tracking_id": "TRK995",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on your Wireless Mouse order",
+      "body": "Hi Diya,\n\nWe\u2019re sorry to let you know that your Wireless Mouse is delayed in transit. To resolve this, you can either cancel the order (no charge) or receive a free replacement shipped from our Bengaluru warehouse. We suggest the replacement, but the choice is yours. Please reply to this email with your preferred option.\n\nThank you for your patience.\n\nCustomer Care Team"
+    },
+    {
+      "tracking_id": "TRK996",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on your MacBook Pro 14\u2011inch order",
+      "body": "Dear Kabir Singh,\n\nWe\u2019re sorry to inform you that your MacBook Pro 14\u2011inch is currently delayed in transit. To resolve this, you may either cancel the order (no charge) or receive a free replacement shipped from our Bengaluru warehouse. We suggest the replacement, but the choice is yours. Please reply to this email with your preferred option.\n\nThank you for your patience.\n\nCustomer Care Team"
+    },
+    {
+      "tracking_id": "TRK992",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on your MacBook Pro 14\u2011inch order",
+      "body": "Dear Aarav Mehta,\n\nWe\u2019re sorry to inform you that your MacBook Pro 14\u2011inch is delayed in transit. While we work to get it to you, you may choose either:\n\n- A full refund of Rs 150,000 to your original payment method\n- A free replacement, shipped from our Bengaluru warehouse\n\nWe suggest the replacement, but the decision is yours. Please reply to this email with your preferred option.\n\nThank you for your patience.\n\nCustomer Care Team"
+    },
+    {
+      "tracking_id": "TRK993",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on your Wireless Mouse order",
+      "body": "Dear Diya Nair,\n\nWe\u2019re sorry to inform you that your Wireless Mouse is delayed in transit. To resolve this, you may choose either:\n\n- a full refund of Rs\u202f1,499 to your original payment method, or\n- a free replacement, shipped from our Bengaluru warehouse.\n\nWe suggest the replacement, but the final decision is yours. Please reply to this email with your preferred option.\n\nThank you for your patience.\n\nCustomer Care Team"
+    },
+    {
+      "tracking_id": "TRK995",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on your Wireless Mouse order",
+      "body": "Dear Diya Nair,\n\nWe\u2019re sorry to inform you that your Wireless Mouse is currently delayed in transit. While we work to get it to you, you have two options:\n\n- Cancel the order \u2013 you won\u2019t be charged.\n- Receive a free replacement, shipped from our Bengaluru warehouse (our suggested option).\n\nPlease reply to this email with the option you prefer. We\u2019ll act on your choice right away.\n\nThank you for your patience.\n\nCustomer Care Team"
+    },
+    {
+      "tracking_id": "TRK996",
+      "template": false,
+      "checks": {
+        "product_named": true,
+        "all_options_present": true,
+        "no_invented_options": true,
+        "no_invented_amounts": true,
+        "suggestion_stated": true,
+        "signed": true,
+        "within_120_words": true
+      },
+      "subject": "Update on your MacBook Pro 14\u2011inch order",
+      "body": "Dear Kabir Singh,\n\nWe\u2019re sorry to inform you that your MacBook Pro 14\u2011inch is delayed in transit. You have two options: cancel \u2013 cancel the order with no charge; replacement \u2013 receive a free replacement shipped from our Bengaluru warehouse. We suggest the replacement option, but the choice is yours. Please reply to this email with your preferred option.\n\nThank you,\nCustomer Care Team"
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "name": "decision",
+  "model": "openai/gpt-oss-120b",
+  "when": "20261118-191251",
+  "headline": {
+    "runs": 8,
+    "errors": 0,
+    "legal": "8/8",
+    "overridden": "0/8",
+    "used_tools": "8/8",
+    "consistent_orders": "4/4",
+    "p50_ms": 4995,
+    "p95_ms": 8801
+  },
+  "details": [
+    {
+      "tracking_id": "TRK992",
+      "pick": "replacement",
+      "offered": [
+        "refund",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 3,
+      "ms": 8801,
+      "reasoning": "A replacement is permissible, inventory is available in Bengaluru for immediate shipment, and it preserves the original sale while only marginally increasing cost."
+    },
+    {
+      "tracking_id": "TRK993",
+      "pick": "replacement",
+      "offered": [
+        "refund",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 6704,
+      "reasoning": "A replacement is allowed, keeps the sale, and the item is in stock at Bengaluru for immediate shipping."
+    },
+    {
+      "tracking_id": "TRK995",
+      "pick": "replacement",
+      "offered": [
+        "cancel",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 4622,
+      "reasoning": "A replacement preserves the sale and we have sufficient stock (50 units) in Bengaluru to fulfill it, making it the preferred option over canceling."
+    },
+    {
+      "tracking_id": "TRK996",
+      "pick": "replacement",
+      "offered": [
+        "cancel",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 5211,
+      "reasoning": "A replacement preserves the sale and inventory is available in Bengaluru, the only warehouse for replacements, allowing prompt fulfillment."
+    },
+    {
+      "tracking_id": "TRK992",
+      "pick": "replacement",
+      "offered": [
+        "refund",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 3,
+      "ms": 4495,
+      "reasoning": "A replacement is permissible, inventory is sufficient in Bengaluru, and it retains the sale while meeting the customer's need."
+    },
+    {
+      "tracking_id": "TRK993",
+      "pick": "replacement",
+      "offered": [
+        "refund",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 5483,
+      "reasoning": "A replacement preserves the sale and the item is in stock (50 units) at the Bengaluru warehouse, allowing prompt shipment, while costing only slightly more than a refund."
+    },
+    {
+      "tracking_id": "TRK995",
+      "pick": "replacement",
+      "offered": [
+        "cancel",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 4995,
+      "reasoning": "A replacement retains the sale and inventory is available for immediate shipment, making it the optimal choice over cancellation."
+    },
+    {
+      "tracking_id": "TRK996",
+      "pick": "replacement",
+      "offered": [
+        "cancel",
+        "replacement"
+      ],
+      "legal": true,
+      "overridden": false,
+      "tool_calls": 2,
+      "ms": 4877,
+      "reasoning": "A replacement preserves the sale and inventory is sufficient in Bengaluru to fulfill it, making it the preferred option over canceling."
+    }
+  ]
+}
